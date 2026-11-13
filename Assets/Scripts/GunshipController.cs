@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GunshipController : MonoBehaviour
 {
@@ -8,14 +9,27 @@ public class GunshipController : MonoBehaviour
     public GameObject cannonballPrefab;
     public float cannonballForce = 150f;
 
+    public ForceMode2D forceMode = ForceMode2D.Force;
+
     void Update()
     {
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.value);
         
         Vector3 leftDirection = AimCannon(mousePosition, leftCannon);
         Vector3 rightDirection = AimCannon(mousePosition, rightCannon);
 
-    }
+        if(Mouse.current.leftButton.wasPressedThisFrame)
+        {
+           FireCannonball(leftDirection, leftCannon); // Fire the cannonball from the left cannon
+        }
+
+        if(Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            FireCannonball(rightDirection, rightCannon);
+        }
+
+        }
+
 
     private Vector3 AimCannon(Vector3 target, Transform cannon)
     {
@@ -30,6 +44,9 @@ public class GunshipController : MonoBehaviour
 
     private void FireCannonball(Vector3 direction, Transform cannon)
     {
-        
+       GameObject cannonball = Instantiate(cannonballPrefab, cannon.position, cannon.rotation); // Instantiate the cannonball prefab at the cannon's position and rotation
+
+       Rigidbody2D rb = cannonball.GetComponent<Rigidbody2D>();
+        rb.AddForce(direction * cannonballForce, forceMode); // Apply force to the cannonball in the direction of the target
     }
 }
