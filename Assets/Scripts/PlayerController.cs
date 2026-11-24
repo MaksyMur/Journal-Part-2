@@ -3,10 +3,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-
+    private FacingDirection facingDirection = FacingDirection.left;// Variable to track the current facing direction of the player
     public float moveSpeed = 5f;
     private Rigidbody2D rb;
-//checking
+
 
 
     public enum FacingDirection
@@ -47,15 +47,26 @@ public class PlayerController : MonoBehaviour
 
     public bool IsWalking()
     {
-        return false;
+        // Check if the absolute value of the horizontal velocity is greater than a small threshold to determine if the player is walking
+        return Mathf.Abs(rb.linearVelocity.x) > 0.01f;
+        
     }
     public bool IsGrounded()
     {
-        return false;
+        
+        return true;
     }
 
     public FacingDirection GetFacingDirection()
     {
-        return FacingDirection.left;
+        if (rb.linearVelocity.x < -0.01f) 
+    {
+        facingDirection = FacingDirection.left;
+    }
+    else if (rb.linearVelocity.x > 0.01f)
+    {
+        facingDirection = FacingDirection.right;
+    }
+        return facingDirection;
     }
 }
